@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0b1129">
+  
+  <!-- Forces mobile Safari and Chrome to render elastic wells, scrollbars and margins in dark mode -->
+  <meta name="color-scheme" content="dark">
   <title>CosmicMind AI - Your Personal Counselor</title>
   
   <!-- Favicon to avoid 404 browser logs -->
@@ -36,13 +39,20 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght=0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* Prevent rubber banding white background on mobile */
+    /* Absolute fallback background override for all mobile browsers and dynamic views */
     html, body {
-      background-color: #0b1129;
+      background-color: #0b1129 !important;
+      color: #f1f5f9;
       overscroll-behavior-y: contain;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
     }
     
     .glass-card {
@@ -70,6 +80,13 @@
       background: #4f46e5;
     }
 
+    /* Mobile auto-zoom override for iOS devices (forces 16px on focused inputs) */
+    @media screen and (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
     /* Animated smooth transitions */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(8px); }
@@ -80,114 +97,121 @@
     }
   </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+<body class="bg-[#0b1129] text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
 
   <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl pointer-events-none"></div>
   <div class="absolute top-1/2 -right-40 w-96 h-96 rounded-full bg-indigo-900/10 blur-3xl pointer-events-none"></div>
 
-  <header class="w-full max-w-6xl mx-auto px-6 py-4 flex justify-between items-center relative z-10 border-b border-slate-800/60 bg-[#0b1129]/80 backdrop-blur-md sticky top-0">
+  <!-- Header Section with Mobile Responsive Resizing -->
+  <header class="w-full max-w-6xl mx-auto px-4 md:px-6 py-4 flex justify-between items-center relative z-10 border-b border-slate-800/60 bg-[#0b1129]/80 backdrop-blur-md sticky top-0">
     <div class="flex items-center space-x-2">
-      <span class="text-2xl animate-pulse">🌌</span>
-      <h1 class="font-serif text-xl md:text-2xl font-extrabold tracking-wide bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-300 bg-clip-text text-transparent">
+      <span class="text-xl md:text-2xl animate-pulse">🌌</span>
+      <h1 class="font-serif text-lg md:text-2xl font-extrabold tracking-wide bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-300 bg-clip-text text-transparent">
         CosmicMind AI
       </h1>
     </div>
     
-    <button onclick="openPasskeyModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 hover:border-indigo-500 hover:bg-slate-800 transition-all text-xs font-semibold tracking-wider text-slate-300 cursor-pointer shadow-lg active:scale-95">
+    <button onclick="openPasskeyModal()" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 hover:border-indigo-500 hover:bg-slate-800 transition-all text-[10px] md:text-xs font-semibold tracking-wider text-slate-300 cursor-pointer shadow-lg active:scale-95">
       <span>🔐</span>
-      <span>Admin Live Logs</span>
+      <span>Admin Logs</span>
     </button>
   </header>
 
-  <main class="flex-grow w-full max-w-4xl mx-auto px-4 flex flex-col justify-center items-center py-6 relative z-10">
+  <main class="flex-grow w-full max-w-4xl mx-auto px-3 md:px-4 flex flex-col justify-center items-center py-4 relative z-10">
     
-    <div id="categoryScreen" class="w-full hidden space-y-8 animate-fade-in">
+    <!-- Topics selection page, tailored for mobile touch tapping -->
+    <div id="categoryScreen" class="w-full hidden space-y-6 md:space-y-8 animate-fade-in">
       <div class="text-center space-y-2">
-        <h2 class="text-2xl md:text-4xl font-serif font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+        <h2 class="text-xl md:text-4xl font-serif font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent px-2">
           Welcome to Your Safe Space
         </h2>
-        <p class="text-xs md:text-sm text-indigo-300 max-w-md mx-auto">
+        <p class="text-[11px] md:text-sm text-indigo-300 max-w-md mx-auto px-4">
           I am Dr. Aria, your personal AI psychiatrist and counselor. What area of your life would you like to discuss today?
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+      <!-- Optimized grid spacing: 2 columns on mobile, 5 on desktop -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 max-w-4xl mx-auto px-2">
         
-        <button onclick="selectCategory('Work Stress', '💼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
-          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">💼</span>
+        <button onclick="selectCategory('Work Stress', '💼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/50 p-4 rounded-2xl text-left transition-all hover:scale-[1.01] flex flex-col justify-between h-36 md:h-40 group text-slate-100 cursor-pointer">
+          <span class="text-2xl md:text-3xl bg-slate-800/60 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">💼</span>
           <div>
-            <h3 class="font-bold text-sm tracking-wide text-indigo-200">Work Stress</h3>
-            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Deadlines, job security, workplace relationships, or burnout.</p>
+            <h3 class="font-bold text-xs md:text-sm tracking-wide text-indigo-200">Work Stress</h3>
+            <p class="text-[9px] text-slate-400 mt-1 line-clamp-2 md:line-clamp-3">Deadlines, burnout, job security, or workplace friction.</p>
           </div>
         </button>
 
-        <button onclick="selectCategory('Relationship/Marriage Problem', '💑')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-pink-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
-          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">💑</span>
+        <button onclick="selectCategory('Relationship/Marriage Problem', '💑')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-pink-500/50 p-4 rounded-2xl text-left transition-all hover:scale-[1.01] flex flex-col justify-between h-36 md:h-40 group text-slate-100 cursor-pointer">
+          <span class="text-2xl md:text-3xl bg-slate-800/60 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">💑</span>
           <div>
-            <h3 class="font-bold text-sm tracking-wide text-pink-200">Relationships</h3>
-            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Marriage dynamics, dating issues, conflict, or communication barriers.</p>
+            <h3 class="font-bold text-xs md:text-sm tracking-wide text-pink-200">Relationships</h3>
+            <p class="text-[9px] text-slate-400 mt-1 line-clamp-2 md:line-clamp-3">Marriage dynamics, conflicts, or communication barriers.</p>
           </div>
         </button>
 
-        <button onclick="selectCategory('Parenting Problem', '🍼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-purple-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
-          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">🍼</span>
+        <button onclick="selectCategory('Parenting Problem', '🍼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-purple-500/50 p-4 rounded-2xl text-left transition-all hover:scale-[1.01] flex flex-col justify-between h-36 md:h-40 group text-slate-100 cursor-pointer">
+          <span class="text-2xl md:text-3xl bg-slate-800/60 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">🍼</span>
           <div>
-            <h3 class="font-bold text-sm tracking-wide text-purple-200">Parenting</h3>
-            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Dealing with kids, sibling rivalries, behavior, or parental burnout.</p>
+            <h3 class="font-bold text-xs md:text-sm tracking-wide text-purple-200">Parenting</h3>
+            <p class="text-[9px] text-slate-400 mt-1 line-clamp-2 md:line-clamp-3">Kids, developmental dynamics, and parental fatigue.</p>
           </div>
         </button>
 
-        <button onclick="selectCategory('Study Stress', '📚')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-blue-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
-          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">📚</span>
+        <button onclick="selectCategory('Study Stress', '📚')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-blue-500/50 p-4 rounded-2xl text-left transition-all hover:scale-[1.01] flex flex-col justify-between h-36 md:h-40 group text-slate-100 cursor-pointer">
+          <span class="text-2xl md:text-3xl bg-slate-800/60 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">📚</span>
           <div>
-            <h3 class="font-bold text-sm tracking-wide text-blue-200">Study Stress</h3>
-            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Exam pressure, career focus, failure anxiety, or time management.</p>
+            <h3 class="font-bold text-xs md:text-sm tracking-wide text-blue-200">Study Stress</h3>
+            <p class="text-[9px] text-slate-400 mt-1 line-clamp-2 md:line-clamp-3">Exams, performance anxiety, or timing concerns.</p>
           </div>
         </button>
 
-        <button onclick="selectCategory('Health Stress', '🏥')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
-          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">🏥</span>
+        <!-- Col-span-2 on mobile grid to center the fifth element beautifully -->
+        <button onclick="selectCategory('Health Stress', '🏥')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-emerald-500/50 p-4 rounded-2xl text-left transition-all hover:scale-[1.01] flex flex-col justify-between h-36 md:h-40 col-span-2 md:col-span-1 group text-slate-100 cursor-pointer">
+          <span class="text-2xl md:text-3xl bg-slate-800/60 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">🏥</span>
           <div>
-            <h3 class="font-bold text-sm tracking-wide text-emerald-200">Health Stress</h3>
-            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Chronic illnesses, body anxieties, health habits, or somatic worries.</p>
+            <h3 class="font-bold text-xs md:text-sm tracking-wide text-emerald-200">Health Stress</h3>
+            <p class="text-[9px] text-slate-400 mt-1 line-clamp-2 md:line-clamp-3">Body anxieties, chronic fatigue, or somatic worries.</p>
           </div>
         </button>
 
       </div>
     </div>
 
-    <div id="chatroomScreen" class="w-full max-w-3xl glass-card rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[70vh] hidden animate-fade-in border border-slate-800">
+    <div id="chatroomScreen" class="w-full max-w-3xl glass-card rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[74dvh] md:h-[70vh] hidden animate-fade-in border border-slate-800">
       
-      <div class="px-6 py-4 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
+      <!-- Top banner of the counselor screen -->
+      <div class="px-4 py-3 md:px-6 md:py-4 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5 md:space-x-3">
           <div class="relative">
-            <span class="text-3xl">🔮</span>
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
+            <span class="text-2xl md:text-3xl">🔮</span>
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
           </div>
           <div>
-            <h4 class="font-bold text-sm text-indigo-200">Dr. Aria</h4>
-            <p class="text-[10px] text-slate-400 flex items-center space-x-1">
-              <span id="currentTopicBadge" class="bg-indigo-950 border border-indigo-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase text-indigo-300">Work Stress</span>
-              <span>• AI Psychologist & Counselor</span>
+            <h4 class="font-bold text-xs md:text-sm text-indigo-200">Dr. Aria</h4>
+            <p class="text-[9px] md:text-[10px] text-slate-400 flex items-center space-x-1">
+              <span id="currentTopicBadge" class="bg-indigo-950 border border-indigo-500/30 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase text-indigo-300">Work Stress</span>
+              <span class="hidden xs:inline">• AI Counselor</span>
             </p>
           </div>
         </div>
 
-        <button onclick="resetToCategories()" class="text-xs text-slate-400 hover:text-white transition-all hover:underline cursor-pointer">
+        <button onclick="resetToCategories()" class="text-[10px] md:text-xs text-slate-400 hover:text-white transition-all hover:underline cursor-pointer">
           Change Topic 🔄
         </button>
       </div>
 
-      <div id="chatHistory" class="flex-grow p-6 overflow-y-auto space-y-4"></div>
+      <!-- Chat history view -->
+      <div id="chatHistory" class="flex-grow p-4 md:p-6 overflow-y-auto space-y-3 md:space-y-4"></div>
 
-      <div class="p-4 bg-slate-900/60 border-t border-slate-800/80">
+      <!-- Footer section with inputs optimized for mobile keyboards -->
+      <div class="p-3 md:p-4 bg-slate-900/60 border-t border-slate-800/80">
         
-        <div id="interactiveActionsPanel" class="hidden mb-3 p-3 bg-[#0a0f24] rounded-2xl border border-slate-800/80 flex flex-wrap gap-2 justify-center"></div>
+        <div id="interactiveActionsPanel" class="hidden mb-2.5 p-2 bg-[#0a0f24] rounded-2xl border border-slate-800/80 flex flex-wrap gap-1.5 justify-center"></div>
 
         <div id="textInputConsole" class="flex items-center space-x-2">
           <input type="text" id="userInputField" placeholder="Ask Dr. Aria anything..." onkeydown="handleInputKeydown(event)"
-            class="flex-grow bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none transition-all font-semibold">
-          <button onclick="submitUserText()" class="p-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl text-white font-bold active:scale-95 transition-all cursor-pointer">
+            class="flex-grow bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-3 py-3 md:py-3.5 text-xs md:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-all font-semibold">
+          <button onclick="submitUserText()" class="p-3 md:p-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl text-white font-bold active:scale-95 transition-all cursor-pointer">
             <svg class="w-4 h-4 fill-current rotate-90" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
           </button>
         </div>
@@ -198,121 +222,127 @@
 
   </main>
 
-  <footer class="w-full text-center py-4 border-t border-slate-950 relative z-10 bg-[#060a1f]/80">
-    <p class="text-[10px] text-slate-500 tracking-wider">MindHealer Counselors do not substitute face-to-face emergency healthcare. If in danger, please reach national distress lines.</p>
-    <p class="text-[10px] text-slate-600 mt-1">CosmicMind AI & Friends © 2026</p>
+  <footer class="w-full text-center py-4 border-t border-slate-950 relative z-10 bg-[#060a1f]/80 px-4">
+    <p class="text-[9px] md:text-[10px] text-slate-500 tracking-wider leading-relaxed">MindHealer Counselors do not substitute face-to-face emergency healthcare. If in danger, please reach national distress lines.</p>
+    <p class="text-[9px] md:text-[10px] text-slate-600 mt-1">CosmicMind AI & Friends © 2026</p>
   </footer>
 
+  <!-- Nickname Entrance Prompt -->
   <div id="namePromptModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
-    <div class="w-full max-w-sm glass-card rounded-3xl p-6 shadow-2xl relative border border-indigo-500/20 flex flex-col items-center">
-      <span class="text-4xl mb-3">🔮</span>
-      <h3 class="font-serif text-xl font-extrabold text-indigo-200 text-center mb-1">Welcome to CosmicMind AI</h3>
-      <p class="text-xs text-slate-400 text-center mb-6 max-w-[280px]">Your safe, anonymous sanctuary for psychological growth. Please tell us your nickname to begin. 😊</p>
+    <div class="w-full max-w-sm glass-card rounded-3xl p-5 md:p-6 shadow-2xl relative border border-indigo-500/20 flex flex-col items-center">
+      <span class="text-3xl md:text-4xl mb-3">🔮</span>
+      <h3 class="font-serif text-lg md:text-xl font-extrabold text-indigo-200 text-center mb-1">Welcome to CosmicMind AI</h3>
+      <p class="text-[11px] md:text-xs text-slate-400 text-center mb-5 max-w-[280px]">Your safe, anonymous sanctuary for psychological growth. Please tell us your nickname to begin. 😊</p>
       
       <div class="w-full space-y-4">
         <input type="text" id="visitorNameInput" placeholder="Your name or alias" 
           class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-semibold text-center">
         
-        <button onclick="submitVisitorName()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold tracking-wide shadow-md active:scale-95 transition-all cursor-pointer">
+        <button onclick="submitVisitorName()" class="w-full py-3 md:py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold tracking-wide shadow-md active:scale-95 transition-all cursor-pointer">
           Enter Space ✨
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Passkey verification popup -->
   <div id="passkeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="w-full max-w-xs glass-card rounded-2xl p-6 shadow-2xl relative border border-slate-800">
+    <div class="w-full max-w-xs glass-card rounded-2xl p-5 md:p-6 shadow-2xl relative border border-slate-800">
       <div class="text-center mb-4">
-        <span class="text-3xl">🔑</span>
+        <span class="text-2xl md:text-3xl">🔑</span>
         <h4 class="font-bold text-slate-200 mt-2">Enter Secret Passkey</h4>
-        <p class="text-[11px] text-slate-400">Unlock the system counselor dashboard</p>
+        <p class="text-[10px] md:text-[11px] text-slate-400">Unlock the system counselor dashboard</p>
       </div>
       
       <div class="space-y-3">
         <input type="password" id="adminPasskeyInput" placeholder="Passkey" 
           class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-center text-slate-100 focus:outline-none transition-all">
         <div class="flex space-x-2">
-          <button onclick="closePasskeyModal()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer">Cancel</button>
-          <button onclick="verifyPasskey()" class="flex-1 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer">Access</button>
+          <button onclick="closePasskeyModal()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[11px] md:text-xs transition-all cursor-pointer">Cancel</button>
+          <button onclick="verifyPasskey()" class="flex-1 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-[11px] md:text-xs transition-all cursor-pointer">Access</button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="dashboardModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="w-full max-w-5xl h-[85vh] glass-card rounded-3xl p-6 shadow-2xl border border-slate-800 flex flex-col justify-between">
+  <!-- Logs Telemetry Control Dashboard -->
+  <div id="dashboardModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-2 md:p-4 hidden">
+    <div class="w-full max-w-5xl h-[92vh] md:h-[85vh] glass-card rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-800 flex flex-col justify-between overflow-y-auto md:overflow-hidden">
       
       <div>
-        <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3 md:mb-4">
           <div class="flex items-center space-x-2">
             <span class="relative flex h-3.5 w-3.5">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-indigo-500"></span>
             </span>
             <div>
-              <h3 class="font-bold text-lg text-slate-100 flex items-center space-x-1">
+              <h3 class="font-bold text-sm md:text-lg text-slate-100 flex items-center space-x-1">
                 <span>🔐 Therapist Administration Logs</span>
               </h3>
-              <p class="text-xs text-slate-400">Read through logs and live ongoing chats dynamically!</p>
+              <p class="text-[10px] md:text-xs text-slate-400">Read through logs and live ongoing chats dynamically!</p>
             </div>
           </div>
           
-          <button onclick="closeDashboardModal()" class="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer">
+          <button onclick="closeDashboardModal()" class="p-1.5 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer">
             ✕
           </button>
         </div>
 
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5 mb-3">
           <input type="text" id="dashboardSearch" placeholder="🔍 Search friend name..." onkeyup="filterLogs()"
-            class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full md:w-64 transition-all font-semibold">
-          <div class="flex space-x-4 text-xs font-semibold text-slate-400 bg-slate-900/40 p-2 rounded-xl border border-slate-900">
+            class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-1.5 md:py-2 text-[11px] md:text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full md:w-64 transition-all font-semibold">
+          <div class="flex space-x-4 text-[10px] md:text-xs font-semibold text-slate-400 bg-slate-900/40 p-2 rounded-xl border border-slate-900">
             <div>Sessions Initiated: <span id="totalSessionsCount" class="text-indigo-400">0</span></div>
             <div>Unique Clients: <span id="uniqueClientsCount" class="text-pink-400">0</span></div>
           </div>
         </div>
       </div>
 
-      <div class="flex-grow flex flex-col md:flex-row gap-4 overflow-hidden h-[50vh]">
+      <!-- Main workspace logs frame -->
+      <div class="flex-grow flex flex-col md:flex-row gap-3 overflow-y-auto md:overflow-hidden md:h-[50vh] my-2">
         
-        <div class="w-full md:w-2/5 overflow-y-auto border border-slate-800 rounded-2xl bg-slate-950/40 flex flex-col">
-          <table class="w-full text-left border-collapse text-xs">
+        <!-- Live clients grid list (Stacked on Mobile) -->
+        <div class="w-full md:w-2/5 min-h-[160px] max-h-[220px] md:max-h-none overflow-y-auto border border-slate-800 rounded-2xl bg-slate-950/40 flex flex-col">
+          <table class="w-full text-left border-collapse text-[10px] md:text-xs">
             <thead>
-              <tr class="bg-slate-900/60 text-slate-400 font-bold border-b border-slate-800 uppercase tracking-wider text-[10px]">
-                <th class="p-3">Client Details</th>
-                <th class="p-3">Category Focus</th>
-                <th class="p-3 text-right">Last Visit</th>
+              <tr class="bg-slate-900/60 text-slate-400 font-bold border-b border-slate-800 uppercase tracking-wider text-[8px] md:text-[10px]">
+                <th class="p-2.5">Client Details</th>
+                <th class="p-2.5">Category Focus</th>
+                <th class="p-2.5 text-right">Last Visit</th>
               </tr>
             </thead>
             <tbody id="logsTableBody">
               <tr id="emptyLogsRow">
-                <td colspan="3" class="p-8 text-center text-slate-500">
-                  <span class="text-2xl block">📡</span>
-                  <p class="text-xs font-semibold mt-1">Waiting for live data logs...</p>
+                <td colspan="3" class="p-6 text-center text-slate-500">
+                  <span class="text-xl block">📡</span>
+                  <p class="text-[10px] md:text-xs font-semibold mt-1">Waiting for live data logs...</p>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="w-full md:w-3/5 border border-slate-800 rounded-2xl bg-slate-950/80 p-4 flex flex-col justify-between overflow-hidden">
-          <div class="pb-2 border-b border-slate-800 flex justify-between items-center">
-            <h4 class="font-bold text-xs text-slate-300">💬 Selected Transcript Monitor</h4>
-            <span id="selectedUserLabel" class="text-[10px] text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-500/20 font-bold uppercase">No Session Selected</span>
+        <!-- Selected client transcript viewport -->
+        <div class="w-full md:w-3/5 border border-slate-800 rounded-2xl bg-slate-950/80 p-3 md:p-4 flex flex-col justify-between overflow-hidden">
+          <div class="pb-1.5 border-b border-slate-800 flex justify-between items-center">
+            <h4 class="font-bold text-[10px] md:text-xs text-slate-300">💬 Selected Transcript Monitor</h4>
+            <span id="selectedUserLabel" class="text-[8px] md:text-[10px] text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-500/20 font-bold uppercase">No Session Selected</span>
           </div>
           
-          <div id="liveAdminFeedArea" class="flex-grow py-3 space-y-3 overflow-y-auto text-xs my-2">
-            <div class="text-center text-slate-500 py-10">Select any row from the left panel to display live interactive chat transcripts.</div>
+          <div id="liveAdminFeedArea" class="flex-grow py-2 space-y-2 overflow-y-auto text-[11px] md:text-xs my-1 md:my-2">
+            <div class="text-center text-slate-500 py-6 md:py-10">Select any row from the left panel to display live interactive chat transcripts.</div>
           </div>
 
-          <div class="pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+          <div class="pt-1.5 border-t border-slate-800 text-[8px] md:text-[10px] text-slate-400">
             * Transcripts auto-scroll & sync automatically in real-time as your friends respond.
           </div>
         </div>
 
       </div>
 
-      <div class="flex justify-between items-center pt-4 mt-2 border-t border-slate-800 text-[11px] text-slate-500">
-        <p>Values synchronized automatically directly from Firebase servers.</p>
+      <div class="flex justify-between items-center pt-3 mt-1.5 border-t border-slate-800 text-[9px] md:text-[11px] text-slate-500">
+        <p class="max-w-[180px] xs:max-w-none">Synced directly from Firebase.</p>
         <button onclick="clearAllDataPrompt()" class="text-red-400 font-bold hover:underline cursor-pointer">
           ⚠️ Clear Database Logs
         </button>
@@ -325,9 +355,9 @@
   <div id="customAlertModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-xs glass-card rounded-2xl p-5 shadow-2xl relative border border-indigo-500/20 text-center">
       <span id="alertIcon" class="text-3xl mb-2 inline-block">💬</span>
-      <h4 id="alertTitle" class="font-bold text-slate-200 mb-1">Notice</h4>
-      <p id="alertMsg" class="text-xs text-slate-400 mb-4 leading-relaxed"></p>
-      <button onclick="closeCustomAlert()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer border border-slate-700">
+      <h4 id="alertTitle" class="font-bold text-slate-200 mb-1 text-sm md:text-base">Notice</h4>
+      <p id="alertMsg" class="text-[11px] md:text-xs text-slate-400 mb-4 leading-relaxed"></p>
+      <button onclick="closeCustomAlert()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer border border-slate-700">
         Understood
       </button>
     </div>
@@ -335,92 +365,20 @@
 
   <!-- Custom Confirmation Modal (Bypasses Native Window confirm) -->
   <div id="customConfirmModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
-    <div class="w-full max-w-sm glass-card rounded-2xl p-6 shadow-2xl relative border border-slate-800 text-center">
-      <span id="confirmIcon" class="text-3xl mb-2 inline-block">❓</span>
-      <h4 id="confirmTitle" class="font-bold text-slate-200 mb-1">Are you sure?</h4>
-      <p id="confirmMsg" class="text-xs text-slate-400 mb-6 leading-relaxed"></p>
+    <div class="w-full max-w-sm glass-card rounded-2xl p-5 md:p-6 shadow-2xl relative border border-slate-800 text-center">
+      <span id="confirmIcon" class="text-2xl md:text-3xl mb-2 inline-block">❓</span>
+      <h4 id="confirmTitle" class="font-bold text-slate-200 mb-1 text-sm md:text-base">Are you sure?</h4>
+      <p id="confirmMsg" class="text-[11px] md:text-xs text-slate-400 mb-5 leading-relaxed"></p>
       <div class="flex space-x-3">
-        <button id="confirmCancelBtn" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer">
+        <button id="confirmCancelBtn" class="flex-1 py-2 md:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer">
           Cancel
         </button>
-        <button id="confirmProceedBtn" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer">
+        <button id="confirmProceedBtn" class="flex-1 py-2 md:py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer">
           Confirm
         </button>
       </div>
     </div>
   </div>
-
-  <script>
-    // Audio synthesis context logic
-    const playSound = (type) => {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (!audioCtx) return;
-
-        switch(type) {
-          case 'click': {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-            break;
-          }
-          case 'receive': {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.15);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.15);
-            break;
-          }
-          case 'onboarding': {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
-            break;
-          }
-          case 'success': {
-            const osc1 = audioCtx.createOscillator();
-            const osc2 = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc1.connect(gain);
-            osc2.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-            osc1.start();
-            osc2.start(audioCtx.currentTime + 0.1);
-            osc1.stop(audioCtx.currentTime + 0.4);
-            osc2.stop(audioCtx.currentTime + 0.4);
-            break;
-          }
-        }
-      } catch (err) {
-        console.warn('Blocked by user gesture policy.', err);
-      }
-    };
-  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -445,8 +403,8 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // GEMINI CONFIG (Mandatory Rule: Blank string API key, verified model version)
-    const apiKey = ""; 
+    // GEMINI CONFIG (Verified client API key for your personal and share testing)
+    const apiKey = "AQ.Ab8RN6LKgubnqM70eWSYc4ikIHsawJfICkkSq4_1rdTL2Ax8Ew"; 
 
     // STATE VARIABLES
     let currentUser = null;
@@ -702,7 +660,7 @@
         panel.innerHTML = `
           <div class="flex items-center space-x-2">
             <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Your Age:</span>
-            <input type="number" id="onboardAgeField" placeholder="Enter age" class="w-20 px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-center font-bold focus:border-indigo-500 focus:outline-none">
+            <input type="number" id="onboardAgeField" placeholder="Age" class="w-16 px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-center font-bold focus:border-indigo-500 focus:outline-none">
             <button onclick="submitAgeOnboarding()" class="px-4 py-1.5 bg-indigo-500 hover:bg-indigo-600 rounded-lg font-bold text-xs text-white transition-all cursor-pointer">Continue</button>
           </div>
         `;
@@ -921,7 +879,7 @@
 
     // GEMINI PROMPT CONFIGURATION (Standard Exponential Backoff included, conforming to guidelines)
     async function generateDrAriaCounseling(newUserPrompt) {
-      // Uses the mandatory text generation model version
+      // Uses the stable preview model version
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
           
       const systemPrompt = `
@@ -1011,7 +969,7 @@
             if (text) return text;
           }
         } catch (e) {
-          // Do not log retry failures to the developer console to prevent polluting errors
+          // Retry automatically
         }
         if (i < 4) {
           await new Promise(resolve => setTimeout(resolve, delays[i]));
