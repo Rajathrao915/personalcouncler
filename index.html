@@ -166,13 +166,11 @@
         </button>
       </div>
 
-      <div id="chatHistory" class="flex-grow p-6 overflow-y-auto space-y-4">
-        </div>
+      <div id="chatHistory" class="flex-grow p-6 overflow-y-auto space-y-4"></div>
 
       <div class="p-4 bg-slate-900/60 border-t border-slate-800/80">
         
-        <div id="interactiveActionsPanel" class="hidden mb-3 p-3 bg-[#0a0f24] rounded-2xl border border-slate-800/80 flex flex-wrap gap-2 justify-center">
-          </div>
+        <div id="interactiveActionsPanel" class="hidden mb-3 p-3 bg-[#0a0f24] rounded-2xl border border-slate-800/80 flex flex-wrap gap-2 justify-center"></div>
 
         <div id="textInputConsole" class="flex items-center space-x-2">
           <input type="text" id="userInputField" placeholder="Ask Dr. Aria anything..." onkeydown="handleInputKeydown(event)"
@@ -397,8 +395,8 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // GEMINI CONFIG [cite: 115]
-    const apiKey = "AQ.Ab8RN6LKgubnqM70eWSYc4ikIHsawJfICkkSq4_1rdTL2Ax8Ew"; // Secured & Activated Live Key Configuration [cite: 116]
+    // GEMINI CONFIG
+    const apiKey = "AQ.Ab8RN6LKgubnqM70eWSYc4ikIHsawJfICkkSq4_1rdTL2Ax8Ew"; 
 
     // STATE VARIABLES
     let currentUser = null;
@@ -564,7 +562,7 @@
 
       // Disable normal text input during onboarding so user has clean buttons
       panel.classList.remove('hidden');
-      textConsole.classList.add('opacity-50');
+      textConsole.add && textConsole.classList.add('opacity-50');
       document.getElementById('userInputField').disabled = true;
       document.getElementById('userInputField').placeholder = "Choose from the selections above...";
 
@@ -792,12 +790,8 @@
 
     // GEMINI PROMPT CONFIGURATION (Standard Exponential Backoff included)
     async function generateDrAriaCounseling(newUserPrompt) {
-      // GEMINI CONFIG
-const apiKey = "AQ.Ab8RN6LKgubnqM70eWSYc4ikIHsawJfICkkSq4_1rdTL2Ax8Ew"; 
-
-async function generateDrAriaCounseling(newUserPrompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-      
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+          
       const systemPrompt = `
         You are Dr. Aria, an exceptionally wise, warm, empathetic, and highly professional AI Psychiatrist and Relationship Counselor.
         You are talking to a client in a confidential therapy workspace with this validated profile:
@@ -1112,3 +1106,5 @@ async function generateDrAriaCounseling(newUserPrompt) {
   </script>
 </body>
 </html>
+
+```
