@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#0b1129">
   <title>CosmicMind AI - Your Personal Counselor</title>
   
+  <!-- Favicon to avoid 404 browser logs -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -65,6 +68,15 @@
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #4f46e5;
+    }
+
+    /* Animated smooth transitions */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.35s ease-out forwards;
     }
   </style>
 </head>
@@ -309,6 +321,7 @@
     </div>
   </div>
 
+  <!-- Custom Alert Modal (Bypasses Native Window alert) -->
   <div id="customAlertModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="w-full max-w-xs glass-card rounded-2xl p-5 shadow-2xl relative border border-indigo-500/20 text-center">
       <span id="alertIcon" class="text-3xl mb-2 inline-block">💬</span>
@@ -320,7 +333,25 @@
     </div>
   </div>
 
+  <!-- Custom Confirmation Modal (Bypasses Native Window confirm) -->
+  <div id="customConfirmModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[60] flex items-center justify-center p-4 hidden animate-fade-in">
+    <div class="w-full max-w-sm glass-card rounded-2xl p-6 shadow-2xl relative border border-slate-800 text-center">
+      <span id="confirmIcon" class="text-3xl mb-2 inline-block">❓</span>
+      <h4 id="confirmTitle" class="font-bold text-slate-200 mb-1">Are you sure?</h4>
+      <p id="confirmMsg" class="text-xs text-slate-400 mb-6 leading-relaxed"></p>
+      <div class="flex space-x-3">
+        <button id="confirmCancelBtn" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer">
+          Cancel
+        </button>
+        <button id="confirmProceedBtn" class="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Audio synthesis context logic
     const playSound = (type) => {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -367,6 +398,23 @@
             osc.stop(audioCtx.currentTime + 0.3);
             break;
           }
+          case 'success': {
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            osc1.start();
+            osc2.start(audioCtx.currentTime + 0.1);
+            osc1.stop(audioCtx.currentTime + 0.4);
+            osc2.stop(audioCtx.currentTime + 0.4);
+            break;
+          }
         }
       } catch (err) {
         console.warn('Blocked by user gesture policy.', err);
@@ -379,24 +427,26 @@
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 1. FIREBASE CONFIGURATION
-    const firebaseConfig = {
-      apiKey: "AIzaSyBh1jAeI5V9PutACGvnwhMCFLn4Y0ttNzM",
-      authDomain: "rajathraoai.firebaseapp.com",
-      projectId: "rajathraoai",
-      storageBucket: "rajathraoai.firebasestorage.app",
-      messagingSenderId: "237007401712",
-      appId: "1:237007401712:web:82d39d38b2e6284ae68835",
-      measurementId: "G-R19WSYB1NN"
-    };
+    // 1. FIREBASE CONFIGURATION (Handles standard Canvas/sandbox overrides dynamically)
+    const firebaseConfig = typeof __firebase_config !== 'undefined' 
+      ? JSON.parse(__firebase_config) 
+      : {
+          apiKey: "AIzaSyBh1jAeI5V9PutACGvnwhMCFLn4Y0ttNzM",
+          authDomain: "rajathraoai.firebaseapp.com",
+          projectId: "rajathraoai",
+          storageBucket: "rajathraoai.firebasestorage.app",
+          messagingSenderId: "237007401712",
+          appId: "1:237007401712:web:82d39d38b2e6284ae68835",
+          measurementId: "G-R19WSYB1NN"
+        };
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'rajathraoai';
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // GEMINI CONFIG
-    const apiKey = "AQ.Ab8RN6LKgubnqM70eWSYc4ikIHsawJfICkkSq4_1rdTL2Ax8Ew"; 
+    // GEMINI CONFIG (Mandatory Rule: Blank string API key, verified model version)
+    const apiKey = ""; 
 
     // STATE VARIABLES
     let currentUser = null;
@@ -415,14 +465,14 @@
     let allSessions = []; // Local logs cache for admin console search and filter
     let activeSelectedAdminSessionId = null; // tracking which session transcript is selected on dashboard
 
-    // 2. AUTHENTICATION BOOTSTRAP (Rule 3 with safe fallback if token mismatch happens)
+    // 2. AUTHENTICATION BOOTSTRAP (Rule 3)
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
           try {
             await signInWithCustomToken(auth, __initial_auth_token);
           } catch (tokenErr) {
-            console.warn("Custom token sign-in failed due to project mismatch, falling back to anonymous sign-in:", tokenErr);
+            console.warn("Custom token sign-in failed, falling back to anonymous sign-in:", tokenErr);
             await signInAnonymously(auth);
           }
         } else {
@@ -441,6 +491,64 @@
         setupDashboardRealtimeListener();
       }
     });
+
+    // Custom confirm state trackers
+    let currentConfirmCallback = null;
+
+    window.showCustomConfirm = function(title, message, icon, onConfirm) {
+      document.getElementById('confirmIcon').innerText = icon || '❓';
+      document.getElementById('confirmTitle').innerText = title || 'Confirmation';
+      document.getElementById('confirmMsg').innerText = message || '';
+      currentConfirmCallback = onConfirm;
+      
+      const modal = document.getElementById('customConfirmModal');
+      modal.classList.remove('hidden');
+    }
+
+    window.closeCustomConfirm = function() {
+      playSound('click');
+      document.getElementById('customConfirmModal').classList.add('hidden');
+      currentConfirmCallback = null;
+    }
+
+    // Set interactive event bindings for confirm modal actions
+    document.getElementById('confirmCancelBtn').onclick = () => {
+      closeCustomConfirm();
+    };
+
+    document.getElementById('confirmProceedBtn').onclick = () => {
+      if (currentConfirmCallback) {
+        currentConfirmCallback();
+      }
+      closeCustomConfirm();
+    };
+
+    // Parse simple Markdown for bubbles to improve visual depth
+    function formatMarkdown(text) {
+      if (!text) return "";
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      
+      // Convert bold (**text**)
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      
+      // Convert single stars (*text*) to italics
+      html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+      // Bullet lists
+      const lines = html.split('\n');
+      const formattedLines = lines.map(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+          return `<li class="ml-4 list-disc my-1">${trimmed.substring(2)}</li>`;
+        }
+        return line;
+      });
+      
+      return formattedLines.join('<br>');
+    }
 
     // Detect user platform details
     function getDeviceType() {
@@ -479,7 +587,7 @@
       modal.classList.add('opacity-0', 'pointer-events-none');
       modal.classList.remove('opacity-100');
 
-      // Setup session immediately in Firestore (Rule 1 Strict Path)
+      // Create session in Firestore (Rule 1 Strict Path)
       if (currentUser) {
         try {
           const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
@@ -532,15 +640,33 @@
       loadInteractiveButtons();
 
       // Save selection details to Session document (Rule 1 Path)
-      if (currentUser && currentSessionId) {
+      if (currentUser) {
         try {
-          const sessionDoc = doc(db, 'artifacts', appId, 'public', 'data', 'sessions', currentSessionId);
-          await updateDoc(sessionDoc, {
-            category: categoryName,
-            status: 'onboarding'
-          });
+          if (!currentSessionId) {
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
+            const docRef = await addDoc(colRef, {
+              visitorName: userName,
+              status: 'onboarding',
+              device: getDeviceType(),
+              createdAt: Date.now(),
+              timestamp: serverTimestamp(),
+              category: categoryName,
+              messages: [{
+                sender: 'system',
+                text: `${userName} started an onboarding stress consultation.`,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              }]
+            });
+            currentSessionId = docRef.id;
+          } else {
+            const sessionDoc = doc(db, 'artifacts', appId, 'public', 'data', 'sessions', currentSessionId);
+            await updateDoc(sessionDoc, {
+              category: categoryName,
+              status: 'onboarding'
+            });
+          }
         } catch (e) {
-          console.error(e);
+          console.error("Firestore update stress category error:", e);
         }
       }
     }
@@ -554,7 +680,7 @@
 
       if (currentStep === 'chatting') {
         panel.classList.add('hidden');
-        textConsole.classList.remove('opacity-50');
+        if (textConsole) textConsole.classList.remove('opacity-50');
         document.getElementById('userInputField').disabled = false;
         document.getElementById('userInputField').placeholder = "Speak openly with Dr. Aria...";
         return;
@@ -562,7 +688,7 @@
 
       // Disable normal text input during onboarding so user has clean buttons
       panel.classList.remove('hidden');
-      textConsole.add && textConsole.classList.add('opacity-50');
+      if (textConsole) textConsole.classList.add('opacity-50');
       document.getElementById('userInputField').disabled = true;
       document.getElementById('userInputField').placeholder = "Choose from the selections above...";
 
@@ -669,11 +795,14 @@
           const messageElements = document.querySelectorAll('.chat-bubble-item');
           const messagesArray = [];
           messageElements.forEach(el => {
-            messagesArray.push({
-              sender: el.dataset.sender,
-              text: el.querySelector('.bubble-text-content').innerText,
-              time: el.dataset.time
-            });
+            const textBubble = el.querySelector('.bubble-text-content');
+            if (textBubble) {
+              messagesArray.push({
+                sender: el.dataset.sender,
+                text: textBubble.innerText,
+                time: el.dataset.time || ''
+              });
+            }
           });
 
           await updateDoc(sessionDoc, {
@@ -703,6 +832,8 @@
         cardClass = "mx-auto bg-slate-950/40 text-slate-500 text-[10px] uppercase font-bold tracking-widest text-center py-1 px-3 border border-slate-900";
       }
 
+      const formattedText = formatMarkdown(text);
+
       const bubbleHtml = sender === 'system'
         ? `
           <div class="chat-bubble-item flex justify-center py-2 animate-fade-in" data-sender="${sender}" data-time="${timeStr}">
@@ -715,7 +846,7 @@
           <div class="chat-bubble-item flex items-end space-x-2 py-1 animate-fade-in ${sender === 'user' ? 'justify-end' : 'justify-start'}" data-sender="${sender}" data-time="${timeStr}">
             ${sender === 'model' ? '<span class="text-2xl">🔮</span>' : ''}
             <div class="max-w-[80%] rounded-2xl px-4 py-3 shadow-md ${cardClass}">
-              <div class="bubble-text-content text-xs leading-relaxed font-semibold whitespace-pre-wrap">${text}</div>
+              <div class="bubble-text-content text-xs leading-relaxed font-semibold whitespace-pre-wrap">${formattedText}</div>
               <div class="text-[9px] opacity-60 text-right mt-1.5 font-mono">${timeStr}</div>
             </div>
           </div>
@@ -729,7 +860,7 @@
       }
     }
 
-    // DYNAMIC FREE-TEXT MESSAGING TO GEMINI
+    // DYNAMIC FREE-TEXT MESSAGING TO GEMINI (With Exponential Backoff implementation)
     async function submitUserText() {
       const userInput = document.getElementById('userInputField').value.trim();
       if (!userInput) return;
@@ -752,7 +883,7 @@
         await syncSessionData();
       } catch (err) {
         showCounselorTyping(false);
-        appendChatMessage('model', "💫 Oh, the cosmic frequency was briefly interrupted. Please ask me again, I am listening with deep attention.");
+        appendChatMessage('model', "💫 Oh, the cosmic frequency was briefly interrupted. Please try again in a few moments; I am listening with deep attention.");
         console.error(err);
       }
     }
@@ -788,9 +919,10 @@
       }
     }
 
-    // GEMINI PROMPT CONFIGURATION (Standard Exponential Backoff included)
+    // GEMINI PROMPT CONFIGURATION (Standard Exponential Backoff included, conforming to guidelines)
     async function generateDrAriaCounseling(newUserPrompt) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      // Uses the mandatory text generation model version
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
           
       const systemPrompt = `
         You are Dr. Aria, an exceptionally wise, warm, empathetic, and highly professional AI Psychiatrist and Relationship Counselor.
@@ -803,39 +935,69 @@
         - Focus Stress Area: ${selectedCategory}
 
         Therapy & Behavioral Guidelines:
-        1. Empathy first. Validate their challenges, struggles, or trauma associated with ${selectedCategory}.
-        2. Adopt an authentic psychological active-listening persona. Avoid dry clinic answers.
+        1. Empathy first. Validate their challenges, struggles, or trauma associated with ${selectedCategory || 'their stress'}.
+        2. Adopt an authentic psychological active-listening persona. Avoid dry clinical answers.
         3. Break down advice into gentle steps. Recommend accessible behavioral exercises (CBT cognitive restructuring, grounding, mindfulness, boundary setups, relationship intimacy communication checks).
         4. If their intimacy levels are low and relationship is married/dating, address the emotional distance with profound compassion, suggesting safe conversations.
         5. Never write huge essays. Keep paragraphs concise, well-spaced, with bullet points where appropriate.
         6. Reference them kindly by their name (${userName}) to establish safety and connection. Keep your dialogue natural.
       `;
 
-      // Read all previous conversational elements
+      // Read history and format it properly
       const bubbles = document.querySelectorAll('.chat-bubble-item');
-      const messagesPayload = [];
+      const rawMessages = [];
       
       bubbles.forEach(el => {
         const sender = el.dataset.sender;
-        const text = el.querySelector('.bubble-text-content').innerText;
         if (sender === 'user' || sender === 'model') {
-          messagesPayload.push({
-            role: sender === 'user' ? 'user' : 'model',
-            parts: [{ text: text }]
+          const textBubble = el.querySelector('.bubble-text-content');
+          if (textBubble) {
+            const text = textBubble.innerText.trim();
+            if (text) {
+              rawMessages.push({ role: sender, text: text });
+            }
+          }
+        }
+      });
+
+      // Safely construct alternating roles format required by the Gemini API
+      const mergedMessages = [];
+      rawMessages.forEach(msg => {
+        if (mergedMessages.length > 0 && mergedMessages[mergedMessages.length - 1].role === msg.role) {
+          mergedMessages[mergedMessages.length - 1].parts[0].text += "\n" + msg.text;
+        } else {
+          mergedMessages.push({
+            role: msg.role === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.text }]
           });
         }
       });
 
-      // Construct Payload
+      // Ensure that context sequence starts with 'user' input
+      if (mergedMessages.length > 0 && mergedMessages[0].role === 'model') {
+        mergedMessages.unshift({
+          role: 'user',
+          parts: [{ text: `Hello Dr. Aria, I'm ready to begin our alignment consultation concerning ${selectedCategory || 'my stress'}.` }]
+        });
+      }
+
+      // Add a fallback default turn if message list is empty
+      if (mergedMessages.length === 0) {
+        mergedMessages.push({
+          role: 'user',
+          parts: [{ text: newUserPrompt }]
+        });
+      }
+
       const payload = {
-        contents: messagesPayload,
+        contents: mergedMessages,
         systemInstruction: {
           parts: [{ text: systemPrompt }]
         }
       };
 
-      // Execute fetch with retry handling
-      let delay = 1000;
+      // Exponential Backoff algorithm: retry up to 5 times with delays of 1s, 2s, 4s, 8s, 16s
+      const delays = [1000, 2000, 4000, 8000, 16000];
       for (let i = 0; i < 5; i++) {
         try {
           const response = await fetch(url, {
@@ -845,25 +1007,31 @@
           });
           if (response.ok) {
             const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || "I am reflecting deeply on your words. Tell me more, I am listening.";
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) return text;
           }
         } catch (e) {
-          // Retry
+          // Do not log retry failures to the developer console to prevent polluting errors
         }
-        await new Promise(resolve => setTimeout(resolve, delay));
-        delay *= 2;
+        if (i < 4) {
+          await new Promise(resolve => setTimeout(resolve, delays[i]));
+        }
       }
       throw new Error("Unable to contact counseling services.");
     }
 
     // RESET SESSION BACK TO TOPICS
-    window.resetToCategories = async function() {
+    window.resetToCategories = function() {
       playSound('click');
-      const verify = confirm("Are you sure you want to pause this session and change your stress topic?");
-      if (verify) {
-        selectedCategory = null;
-        showCategorySelection();
-      }
+      showCustomConfirm(
+        "Change Topic",
+        "Are you sure you want to pause this current session and change your stress topic?",
+        "🔄",
+        () => {
+          selectedCategory = null;
+          showCategorySelection();
+        }
+      );
     }
 
 
@@ -956,7 +1124,9 @@
       const uniqueNames = new Set();
 
       list.forEach(item => {
-        uniqueNames.add(item.visitorName);
+        if (item.visitorName) {
+          uniqueNames.add(item.visitorName);
+        }
 
         // Date format helper
         let formattedTime = 'Recently';
@@ -974,7 +1144,7 @@
         rowsHtml += `
           <tr onclick="selectAdminTranscriptRow('${item.id}')" class="border-b border-slate-900/60 hover:bg-slate-900/40 transition-colors cursor-pointer ${statusHighlight}">
             <td class="p-3">
-              <div class="font-bold text-slate-200">${item.visitorName}</div>
+              <div class="font-bold text-slate-200">${item.visitorName || 'Anonymous'}</div>
               <div class="text-[9px] text-slate-500">${item.device || 'Mobile 📱'}</div>
             </td>
             <td class="p-3">
@@ -996,9 +1166,10 @@
     window.filterLogs = function() {
       const searchVal = document.getElementById('dashboardSearch').value.toLowerCase();
       const filtered = allSessions.filter(item => {
-        return item.visitorName.toLowerCase().includes(searchVal) || 
-               (item.category && item.category.toLowerCase().includes(searchVal)) ||
-               (item.gender && item.gender.toLowerCase().includes(searchVal));
+        const name = item.visitorName ? item.visitorName.toLowerCase() : "";
+        const cat = item.category ? item.category.toLowerCase() : "";
+        const gen = item.gender ? item.gender.toLowerCase() : "";
+        return name.includes(searchVal) || cat.includes(searchVal) || gen.includes(searchVal);
       });
       renderAdminSessionsList(filtered);
     }
@@ -1010,14 +1181,13 @@
       const currentSelect = allSessions.find(s => s.id === sessionId);
       if (currentSelect) {
         renderSelectedLiveFeed(currentSelect);
-        // Rerender table list to display highlighted state active border
         renderAdminSessionsList(allSessions);
       }
     }
 
     // RENDER INTERACTIVE TRANSCRIPT STREAM IN ADMIN VIEW
     function renderSelectedLiveFeed(sessionObj) {
-      document.getElementById('selectedUserLabel').innerText = `${sessionObj.visitorName}'s Live Session`;
+      document.getElementById('selectedUserLabel').innerText = `${sessionObj.visitorName || 'Anonymous'}'s Live Session`;
       const feedArea = document.getElementById('liveAdminFeedArea');
       feedArea.innerHTML = '';
 
@@ -1034,7 +1204,7 @@
       feedArea.innerHTML += metaHtml;
 
       if (!sessionObj.messages || sessionObj.messages.length === 0) {
-        feedArea.innerHTML += `<div class="text-center text-slate-500 py-6">Waiting for client to send first onboarding message...</div>`;
+        feedArea.innerHTML += `<div class="text-center text-slate-500 py-6">Waiting for client to initiate session history...</div>`;
         return;
       }
 
@@ -1049,13 +1219,15 @@
         } else {
           const sideColor = msg.sender === 'user' ? 'border-l-2 border-indigo-500 bg-indigo-950/20' : 'border-l-2 border-slate-700 bg-slate-900/40';
           const nameColor = msg.sender === 'user' ? 'text-indigo-300' : 'text-slate-400';
+          const formattedTxt = formatMarkdown(msg.text);
+
           chatHistoryHtml += `
             <div class="p-2 rounded ${sideColor} space-y-1">
               <div class="flex justify-between items-center text-[10px] font-bold">
-                <span class="${nameColor}">${msg.sender === 'user' ? sessionObj.visitorName : 'Dr. Aria'}</span>
+                <span class="${nameColor}">${msg.sender === 'user' ? (sessionObj.visitorName || 'User') : 'Dr. Aria'}</span>
                 <span class="text-slate-500 text-[8px] font-mono">${msg.time || ''}</span>
               </div>
-              <p class="text-slate-300 leading-normal text-xs whitespace-pre-wrap">${msg.text}</p>
+              <p class="text-slate-300 leading-normal text-xs whitespace-pre-wrap">${formattedTxt}</p>
             </div>
           `;
         }
@@ -1065,30 +1237,37 @@
       feedArea.scrollTop = feedArea.scrollHeight;
     }
 
-    // PURGE ADMIN LOGS
-    window.clearAllDataPrompt = async function() {
+    // PURGE ADMIN LOGS (Strict rule: No window.confirm)
+    window.clearAllDataPrompt = function() {
       playSound('click');
-      const verify = confirm("⚠️ Are you absolutely sure you want to clear all interactive psychiatric logs? This resets visitor history completely.");
-      if (verify) {
-        try {
-          const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
-          const snap = await getDocs(colRef);
-          
-          const promises = snap.docs.map(item => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sessions', item.id)));
-          await Promise.all(promises);
-          
-          activeSelectedAdminSessionId = null;
-          document.getElementById('liveAdminFeedArea').innerHTML = `<div class="text-center text-slate-500 py-10">Select any row from the left panel to display live interactive transcripts.</div>`;
-          document.getElementById('selectedUserLabel').innerText = 'No Session Selected';
+      if (!currentUser) return;
 
-          showCustomAlert('🗑️ Purged Complete', 'Sessions data cleared completely.');
-        } catch (err) {
-          console.error(err);
+      showCustomConfirm(
+        "Clear Database Logs",
+        "⚠️ Are you absolutely sure you want to clear all interactive logs? This resets visitor history completely from the cloud servers.",
+        "⚠️",
+        async () => {
+          try {
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
+            const snap = await getDocs(colRef);
+            
+            const promises = snap.docs.map(item => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sessions', item.id)));
+            await Promise.all(promises);
+            
+            activeSelectedAdminSessionId = null;
+            document.getElementById('liveAdminFeedArea').innerHTML = `<div class="text-center text-slate-500 py-10">Select any row from the left panel to display live interactive transcripts.</div>`;
+            document.getElementById('selectedUserLabel').innerText = 'No Session Selected';
+
+            showCustomAlert('🗑️ Purge Complete', 'Sessions data cleared completely.');
+          } catch (err) {
+            console.error(err);
+            showCustomAlert('Error', 'An error occurred while attempting to purge session logs.');
+          }
         }
-      }
+      );
     }
 
-    // CUSTOM MODAL ALERTS
+    // CUSTOM MODAL ALERTS (Strict rule: No window.alert)
     window.showCustomAlert = function(title, text, icon = '🌌') {
       document.getElementById('alertIcon').innerText = icon;
       document.getElementById('alertTitle').innerText = title;
@@ -1106,5 +1285,3 @@
   </script>
 </body>
 </html>
-
-```
