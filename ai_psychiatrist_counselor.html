@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0b1129]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b1129">
+  <title>CosmicMind AI - Your Personal Counselor</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cosmic: {
+              950: '#060a1f',
+              900: '#0b1129',
+              800: '#141d44',
+              700: '#1e295d',
+              500: '#4f46e5',
+              400: '#6366f1',
+              300: '#818cf8',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Prevent rubber banding white background on mobile */
+    html, body {
+      background-color: #0b1129;
+      overscroll-behavior-y: contain;
+    }
+    
+    .glass-card {
+      background: rgba(20, 29, 68, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glow-neon {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b1129;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e295d;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e5;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Animated Cosmic Ambient Lights -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute top-1/2 -right-40 w-96 h-96 rounded-full bg-indigo-900/10 blur-3xl pointer-events-none"></div>
+
+  <!-- HEADER -->
+  <header class="w-full max-w-6xl mx-auto px-6 py-4 flex justify-between items-center relative z-10 border-b border-slate-800/60 bg-[#0b1129]/80 backdrop-blur-md sticky top-0">
+    <div class="flex items-center space-x-2">
+      <span class="text-2xl animate-pulse">🌌</span>
+      <h1 class="font-serif text-xl md:text-2xl font-extrabold tracking-wide bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-300 bg-clip-text text-transparent">
+        CosmicMind AI
+      </h1>
+    </div>
+    
+    <!-- Admin Logs Locked Badge -->
+    <button onclick="openPasskeyModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 hover:border-indigo-500 hover:bg-slate-800 transition-all text-xs font-semibold tracking-wider text-slate-300 cursor-pointer shadow-lg active:scale-95">
+      <span>🔐</span>
+      <span>Admin Live Logs</span>
+    </button>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow w-full max-w-4xl mx-auto px-4 flex flex-col justify-center items-center py-6 relative z-10">
+    
+    <!-- Step 1: Category Selection Screen -->
+    <div id="categoryScreen" class="w-full hidden space-y-8 animate-fade-in">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl md:text-4xl font-serif font-extrabold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+          Welcome to Your Safe Space
+        </h2>
+        <p class="text-xs md:text-sm text-indigo-300 max-w-md mx-auto">
+          I am Dr. Aria, your personal AI psychiatrist and counselor. What area of your life would you like to discuss today?
+        </p>
+      </div>
+
+      <!-- Category Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+        
+        <!-- Work Stress -->
+        <button onclick="selectCategory('Work Stress', '💼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
+          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">💼</span>
+          <div>
+            <h3 class="font-bold text-sm tracking-wide text-indigo-200">Work Stress</h3>
+            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Deadlines, job security, workplace relationships, or burnout.</p>
+          </div>
+        </button>
+
+        <!-- Relationship Stress -->
+        <button onclick="selectCategory('Relationship/Marriage Problem', '💑')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-pink-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
+          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">💑</span>
+          <div>
+            <h3 class="font-bold text-sm tracking-wide text-pink-200">Relationships</h3>
+            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Marriage dynamics, dating issues, conflict, or communication barriers.</p>
+          </div>
+        </button>
+
+        <!-- Parenting Stress -->
+        <button onclick="selectCategory('Parenting Problem', '🍼')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-purple-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
+          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">🍼</span>
+          <div>
+            <h3 class="font-bold text-sm tracking-wide text-purple-200">Parenting</h3>
+            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Dealing with kids, sibling rivalries, behavior, or parental burnout.</p>
+          </div>
+        </button>
+
+        <!-- Study Stress -->
+        <button onclick="selectCategory('Study Stress', '📚')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-blue-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
+          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">📚</span>
+          <div>
+            <h3 class="font-bold text-sm tracking-wide text-blue-200">Study Stress</h3>
+            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Exam pressure, career focus, failure anxiety, or time management.</p>
+          </div>
+        </button>
+
+        <!-- Health Stress -->
+        <button onclick="selectCategory('Health Stress', '🏥')" class="glass-card hover:bg-indigo-950/40 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl text-left transition-all hover:scale-[1.02] flex flex-col justify-between h-40 group text-slate-100">
+          <span class="text-3xl bg-slate-800/60 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">🏥</span>
+          <div>
+            <h3 class="font-bold text-sm tracking-wide text-emerald-200">Health Stress</h3>
+            <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">Chronic illnesses, body anxieties, health habits, or somatic worries.</p>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Step 2: Main Therapy Chatroom -->
+    <div id="chatroomScreen" class="w-full max-w-3xl glass-card rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[70vh] hidden animate-fade-in border border-slate-800">
+      
+      <!-- Chat Head Profile -->
+      <div class="px-6 py-4 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="relative">
+            <span class="text-3xl">🔮</span>
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-indigo-200">Dr. Aria</h4>
+            <p class="text-[10px] text-slate-400 flex items-center space-x-1">
+              <span id="currentTopicBadge" class="bg-indigo-950 border border-indigo-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase text-indigo-300">Work Stress</span>
+              <span>• AI Psychologist & Counselor</span>
+            </p>
+          </div>
+        </div>
+
+        <button onclick="resetToCategories()" class="text-xs text-slate-400 hover:text-white transition-all hover:underline cursor-pointer">
+          Change Topic 🔄
+        </button>
+      </div>
+
+      <!-- Message History Container -->
+      <div id="chatHistory" class="flex-grow p-6 overflow-y-auto space-y-4">
+        <!-- Message list is populated here dynamically -->
+      </div>
+
+      <!-- Action Footer (Inputs, Onboarding buttons) -->
+      <div class="p-4 bg-slate-900/60 border-t border-slate-800/80">
+        
+        <!-- Interactive Form Options Panel (Updates based on onboarding step) -->
+        <div id="interactiveActionsPanel" class="hidden mb-3 p-3 bg-[#0a0f24] rounded-2xl border border-slate-800/80 flex flex-wrap gap-2 justify-center">
+          <!-- Dynamic onboarding choices loaded here -->
+        </div>
+
+        <!-- Normal Text Input Console -->
+        <div id="textInputConsole" class="flex items-center space-x-2">
+          <input type="text" id="userInputField" placeholder="Ask Dr. Aria anything..." onkeydown="handleInputKeydown(event)"
+            class="flex-grow bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none transition-all font-semibold">
+          <button onclick="submitUserText()" class="p-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl text-white font-bold active:scale-95 transition-all cursor-pointer">
+            <svg class="w-4 h-4 fill-current rotate-90" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full text-center py-4 border-t border-slate-950 relative z-10 bg-[#060a1f]/80">
+    <p class="text-[10px] text-slate-500 tracking-wider">MindHealer Counselors do not substitute face-to-face emergency healthcare. If in danger, please reach national distress lines.</p>
+    <p class="text-[10px] text-slate-600 mt-1">CosmicMind AI & Friends © 2026</p>
+  </footer>
+
+  <!-- MODAL: WELCOME CHOOSE NAME -->
+  <div id="namePromptModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+    <div class="w-full max-w-sm glass-card rounded-3xl p-6 shadow-2xl relative border border-indigo-500/20 flex flex-col items-center">
+      <span class="text-4xl mb-3">🔮</span>
+      <h3 class="font-serif text-xl font-extrabold text-indigo-200 text-center mb-1">Welcome to CosmicMind AI</h3>
+      <p class="text-xs text-slate-400 text-center mb-6 max-w-[280px]">Your safe, anonymous sanctuary for psychological growth. Please tell us your nickname to begin. 😊</p>
+      
+      <div class="w-full space-y-4">
+        <input type="text" id="visitorNameInput" placeholder="Your name or alias" 
+          class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-semibold text-center">
+        
+        <button onclick="submitVisitorName()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold tracking-wide shadow-md active:scale-95 transition-all cursor-pointer">
+          Enter Space ✨
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADMIN PASSKEY PROMPT -->
+  <div id="passkeyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-xs glass-card rounded-2xl p-6 shadow-2xl relative border border-slate-800">
+      <div class="text-center mb-4">
+        <span class="text-3xl">🔑</span>
+        <h4 class="font-bold text-slate-200 mt-2">Enter Secret Passkey</h4>
+        <p class="text-[11px] text-slate-400">Unlock the system counselor dashboard</p>
+      </div>
+      
+      <div class="space-y-3">
+        <input type="password" id="adminPasskeyInput" placeholder="Passkey" 
+          class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-center text-slate-100 focus:outline-none transition-all">
+        <div class="flex space-x-2">
+          <button onclick="closePasskeyModal()" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer">Cancel</button>
+          <button onclick="verifyPasskey()" class="flex-1 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer">Access</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LIVE ANALYTICS & LOGS DASHBOARD -->
+  <div id="dashboardModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-5xl h-[85vh] glass-card rounded-3xl p-6 shadow-2xl border border-slate-800 flex flex-col justify-between">
+      
+      <div>
+        <!-- Header -->
+        <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="relative flex h-3.5 w-3.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-indigo-500"></span>
+            </span>
+            <div>
+              <h3 class="font-bold text-lg text-slate-100 flex items-center space-x-1">
+                <span>🔐 Therapist Administration Logs</span>
+              </h3>
+              <p class="text-xs text-slate-400">Read through logs and live ongoing chats dynamically!</p>
+            </div>
+          </div>
+          
+          <button onclick="closeDashboardModal()" class="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-all cursor-pointer">
+            ✕
+          </button>
+        </div>
+
+        <!-- Filter & Stats -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <input type="text" id="dashboardSearch" placeholder="🔍 Search friend name..." onkeyup="filterLogs()"
+            class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full md:w-64 transition-all font-semibold">
+          <div class="flex space-x-4 text-xs font-semibold text-slate-400 bg-slate-900/40 p-2 rounded-xl border border-slate-900">
+            <div>Sessions Initiated: <span id="totalSessionsCount" class="text-indigo-400">0</span></div>
+            <div>Unique Clients: <span id="uniqueClientsCount" class="text-pink-400">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Two Column Console Layout -->
+      <div class="flex-grow flex flex-col md:flex-row gap-4 overflow-hidden h-[50vh]">
+        
+        <!-- Left Side: Session List -->
+        <div class="w-full md:w-2/5 overflow-y-auto border border-slate-800 rounded-2xl bg-slate-950/40 flex flex-col">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-900/60 text-slate-400 font-bold border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                <th class="p-3">Client Details</th>
+                <th class="p-3">Category Focus</th>
+                <th class="p-3 text-right">Last Visit</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody">
+              <tr id="emptyLogsRow">
+                <td colspan="3" class="p-8 text-center text-slate-500">
+                  <span class="text-2xl block">📡</span>
+                  <p class="text-xs font-semibold mt-1">Waiting for live data logs...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Right Side: Real-time Live Chat Feed Reader -->
+        <div class="w-full md:w-3/5 border border-slate-800 rounded-2xl bg-slate-950/80 p-4 flex flex-col justify-between overflow-hidden">
+          <div class="pb-2 border-b border-slate-800 flex justify-between items-center">
+            <h4 class="font-bold text-xs text-slate-300">💬 Selected Transcript Monitor</h4>
+            <span id="selectedUserLabel" class="text-[10px] text-indigo-300 bg-indigo-950/80 px-2 py-0.5 rounded border border-indigo-500/20 font-bold uppercase">No Session Selected</span>
+          </div>
+          
+          <!-- Selected Feed Area -->
+          <div id="liveAdminFeedArea" class="flex-grow py-3 space-y-3 overflow-y-auto text-xs my-2">
+            <div class="text-center text-slate-500 py-10">Select any row from the left panel to display live interactive chat transcripts.</div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+            * Transcripts auto-scroll & sync automatically in real-time as your friends respond.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Control Panel -->
+      <div class="flex justify-between items-center pt-4 mt-2 border-t border-slate-800 text-[11px] text-slate-500">
+        <p>Values synchronized automatically directly from Firebase servers.</p>
+        <button onclick="clearAllDataPrompt()" class="text-red-400 font-bold hover:underline cursor-pointer">
+          ⚠️ Clear Database Logs
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CUSTOM ALERT MODAL -->
+  <div id="customAlertModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-xs glass-card rounded-2xl p-5 shadow-2xl relative border border-indigo-500/20 text-center">
+      <span id="alertIcon" class="text-3xl mb-2 inline-block">💬</span>
+      <h4 id="alertTitle" class="font-bold text-slate-200 mb-1">Notice</h4>
+      <p id="alertMsg" class="text-xs text-slate-400 mb-4 leading-relaxed"></p>
+      <button onclick="closeCustomAlert()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all cursor-pointer border border-slate-700">
+        Understood
+      </button>
+    </div>
+  </div>
+
+  <!-- SOUND SYSTEM (Web Audio API Synthesizer) -->
+  <script>
+    const playSound = (type) => {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!audioCtx) return;
+
+        switch(type) {
+          case 'click': {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+            break;
+          }
+          case 'receive': {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.15);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+            break;
+          }
+          case 'onboarding': {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+            break;
+          }
+        }
+      } catch (err) {
+        console.warn('Blocked by user gesture policy.', err);
+      }
+    };
+  </script>
+
+  <!-- SYSTEM CORE IMPLEMENTATION (FIREBASE & CHAT ENGINE) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 1. FIREBASE CONFIGURATION
+    const firebaseConfig = {
+      apiKey: "AIzaSyBh1jAeI5V9PutACGvnwhMCFLn4Y0ttNzM",
+      authDomain: "rajathraoai.firebaseapp.com",
+      projectId: "rajathraoai",
+      storageBucket: "rajathraoai.firebasestorage.app",
+      messagingSenderId: "237007401712",
+      appId: "1:237007401712:web:82d39d38b2e6284ae68835",
+      measurementId: "G-R19WSYB1NN"
+    };
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'rajathraoai';
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // GEMINI CONFIG
+    const apiKey = ""; // Set dynamically by the live runtime
+
+    // STATE VARIABLES
+    let currentUser = null;
+    let currentSessionId = null;
+    let selectedCategory = null;
+    let selectedCategoryIcon = "";
+    
+    // User profiling parameters
+    let userName = "";
+    let userGender = "";
+    let userAge = "";
+    let userRelationship = "";
+    let userIntimacy = "";
+    let currentStep = 'welcome'; // welcome, gender, age, relationship, intimacy, chatting
+
+    let allSessions = []; // Local logs cache for admin console search and filter
+    let activeSelectedAdminSessionId = null; // tracking which session transcript is selected on dashboard
+
+    // 2. AUTHENTICATION BOOTSTRAP (Rule 3 with safe fallback if token mismatch happens)
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          try {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } catch (tokenErr) {
+            console.warn("Custom token sign-in failed due to project mismatch, falling back to anonymous sign-in:", tokenErr);
+            await signInAnonymously(auth);
+          }
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Authentication setup failed completely:", err);
+      }
+    };
+    initAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        checkVisitorNameSetup();
+        setupDashboardRealtimeListener();
+      }
+    });
+
+    // Detect user platform details
+    function getDeviceType() {
+      const userAgent = navigator.userAgent;
+      if (/mobile/i.test(userAgent)) return "Mobile 📱";
+      if (/tablet/i.test(userAgent)) return "Tablet 📟";
+      return "Desktop 💻";
+    }
+
+    // CHECK OR ASK VISITOR NAME
+    function checkVisitorNameSetup() {
+      const storedName = localStorage.getItem('mind_visitor_name');
+      if (!storedName) {
+        const modal = document.getElementById('namePromptModal');
+        modal.classList.remove('pointer-events-none', 'opacity-0');
+        modal.classList.add('opacity-100');
+      } else {
+        userName = storedName;
+        showCategorySelection();
+      }
+    }
+
+    // ON SUBMIT NICKNAME POPUP
+    async function submitVisitorName() {
+      const nameInput = document.getElementById('visitorNameInput').value.trim();
+      if (!nameInput) {
+        showCustomAlert('💫 Registration Warning', 'Please provide an alias or your name to enter the safe space!');
+        return;
+      }
+      playSound('click');
+      localStorage.setItem('mind_visitor_name', nameInput);
+      userName = nameInput;
+
+      // Close Popup
+      const modal = document.getElementById('namePromptModal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.classList.remove('opacity-100');
+
+      // Setup session immediately in Firestore (Rule 1 Strict Path)
+      if (currentUser) {
+        try {
+          const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
+          const docRef = await addDoc(colRef, {
+            visitorName: userName,
+            status: 'registered',
+            device: getDeviceType(),
+            createdAt: Date.now(),
+            timestamp: serverTimestamp(),
+            messages: [{
+              sender: 'system',
+              text: `${userName} entered website safe space.`,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }]
+          });
+          currentSessionId = docRef.id;
+        } catch (e) {
+          console.error("Firestore logging error:", e);
+        }
+      }
+
+      showCategorySelection();
+    }
+    window.submitVisitorName = submitVisitorName;
+
+    function showCategorySelection() {
+      document.getElementById('categoryScreen').classList.remove('hidden');
+      document.getElementById('chatroomScreen').classList.add('hidden');
+    }
+
+    // DYNAMIC CATEGORY PICKED
+    async function selectCategory(categoryName, icon) {
+      playSound('click');
+      selectedCategory = categoryName;
+      selectedCategoryIcon = icon;
+
+      document.getElementById('currentTopicBadge').innerText = `${icon} ${categoryName}`;
+      document.getElementById('categoryScreen').classList.add('hidden');
+      document.getElementById('chatroomScreen').classList.remove('hidden');
+
+      // Clear layout and boot onboarding chat flow
+      const chatBox = document.getElementById('chatHistory');
+      chatBox.innerHTML = '';
+      currentStep = 'gender';
+
+      // Welcome Message
+      appendChatMessage('model', `Hello ${userName}. I am Dr. Aria, your safe celestial counselor. I notice you want to discuss your **${selectedCategory}** today. First, to help guide our alignment, may I ask your **Gender**?`);
+      
+      // Update interactive onboarding buttons inside console
+      loadInteractiveButtons();
+
+      // Save selection details to Session document (Rule 1 Path)
+      if (currentUser && currentSessionId) {
+        try {
+          const sessionDoc = doc(db, 'artifacts', appId, 'public', 'data', 'sessions', currentSessionId);
+          await updateDoc(sessionDoc, {
+            category: categoryName,
+            status: 'onboarding'
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+    window.selectCategory = selectCategory;
+
+    // RENDER INTERACTIVE ONBOARDING BUTTON CONTROLS
+    function loadInteractiveButtons() {
+      const panel = document.getElementById('interactiveActionsPanel');
+      const textConsole = document.getElementById('textInputConsole');
+      panel.innerHTML = '';
+
+      if (currentStep === 'chatting') {
+        panel.classList.add('hidden');
+        textConsole.classList.remove('opacity-50');
+        document.getElementById('userInputField').disabled = false;
+        document.getElementById('userInputField').placeholder = "Speak openly with Dr. Aria...";
+        return;
+      }
+
+      // Disable normal text input during onboarding so user has clean buttons
+      panel.classList.remove('hidden');
+      textConsole.classList.add('opacity-50');
+      document.getElementById('userInputField').disabled = true;
+      document.getElementById('userInputField').placeholder = "Choose from the selections above...";
+
+      if (currentStep === 'gender') {
+        const options = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+        options.forEach(opt => {
+          panel.innerHTML += `<button onclick="submitOnboardingChoice('${opt}')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:border-indigo-500 text-xs border border-slate-700 rounded-xl transition-all font-semibold cursor-pointer">${opt}</button>`;
+        });
+      } 
+      else if (currentStep === 'age') {
+        panel.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Your Age:</span>
+            <input type="number" id="onboardAgeField" placeholder="Enter age" class="w-20 px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-center font-bold focus:border-indigo-500 focus:outline-none">
+            <button onclick="submitAgeOnboarding()" class="px-4 py-1.5 bg-indigo-500 hover:bg-indigo-600 rounded-lg font-bold text-xs text-white transition-all cursor-pointer">Continue</button>
+          </div>
+        `;
+      } 
+      else if (currentStep === 'relationship') {
+        const options = ['Single', 'Married', 'In a Relationship'];
+        options.forEach(opt => {
+          panel.innerHTML += `<button onclick="submitOnboardingChoice('${opt}')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:border-indigo-500 text-xs border border-slate-700 rounded-xl transition-all font-semibold cursor-pointer">${opt}</button>`;
+        });
+      } 
+      else if (currentStep === 'intimacy') {
+        const options = ['0-1 times a week', '2-4 times a week', '5+ times a week', 'Prefer not to say'];
+        options.forEach(opt => {
+          panel.innerHTML += `<button onclick="submitOnboardingChoice('${opt}')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:border-indigo-500 text-xs border border-slate-700 rounded-xl transition-all font-semibold cursor-pointer">${opt}</button>`;
+        });
+      }
+    }
+
+    // PROCESS USER SELECTION IN ONBOARDING
+    async function submitOnboardingChoice(value) {
+      playSound('click');
+      appendChatMessage('user', value);
+
+      if (currentStep === 'gender') {
+        userGender = value;
+        currentStep = 'age';
+        setTimeout(() => {
+          appendChatMessage('model', "Excellent. How old are you? Feel free to enter below.");
+          loadInteractiveButtons();
+        }, 600);
+      } 
+      else if (currentStep === 'relationship') {
+        userRelationship = value;
+        if (value === 'Single') {
+          userIntimacy = 'N/A';
+          currentStep = 'chatting';
+          setTimeout(() => {
+            appendChatMessage('model', "Got it. Thank you for clarifying. Let's focus purely on your well-being. Tell me, what's been contributing to your stress lately?");
+            loadInteractiveButtons();
+          }, 600);
+        } else {
+          currentStep = 'intimacy';
+          setTimeout(() => {
+            appendChatMessage('model', "Understood. In your relationship context, roughly how many times a week do you experience physical intimacy (including hugs, kisses, or intercourse)?");
+            loadInteractiveButtons();
+          }, 600);
+        }
+      } 
+      else if (currentStep === 'intimacy') {
+        userIntimacy = value;
+        currentStep = 'chatting';
+        setTimeout(() => {
+          appendChatMessage('model', "I appreciate your openness and honesty. Everything is fully confidential here. Let's address your stress. Tell me, what's been on your mind lately?");
+          loadInteractiveButtons();
+        }, 600);
+      }
+
+      await syncSessionData();
+    }
+    window.submitOnboardingChoice = submitOnboardingChoice;
+
+    // AGE FORM HANDLER
+    async function submitAgeOnboarding() {
+      const ageVal = document.getElementById('onboardAgeField').value.trim();
+      if (!ageVal || isNaN(ageVal) || ageVal <= 0) {
+        showCustomAlert('🧙‍♂️ Valid Input', 'Please provide a valid age to assist Dr. Aria!');
+        return;
+      }
+      playSound('click');
+      appendChatMessage('user', `${ageVal} years old`);
+      userAge = ageVal;
+
+      currentStep = 'relationship';
+      setTimeout(() => {
+        appendChatMessage('model', "Got it. What is your current relationship status?");
+        loadInteractiveButtons();
+      }, 600);
+
+      await syncSessionData();
+    }
+    window.submitAgeOnboarding = submitAgeOnboarding;
+
+    // SYNC ACTIVE CONTEXT TO CLOUD
+    async function syncSessionData() {
+      if (currentUser && currentSessionId) {
+        try {
+          const sessionDoc = doc(db, 'artifacts', appId, 'public', 'data', 'sessions', currentSessionId);
+          
+          // Get all message elements from the DOM to capture full history
+          const messageElements = document.querySelectorAll('.chat-bubble-item');
+          const messagesArray = [];
+          messageElements.forEach(el => {
+            messagesArray.push({
+              sender: el.dataset.sender,
+              text: el.querySelector('.bubble-text-content').innerText,
+              time: el.dataset.time
+            });
+          });
+
+          await updateDoc(sessionDoc, {
+            gender: userGender || 'N/A',
+            age: userAge || 'N/A',
+            relationshipStatus: userRelationship || 'N/A',
+            intimacyFrequency: userIntimacy || 'N/A',
+            messages: messagesArray,
+            status: currentStep === 'chatting' ? 'chatting' : 'onboarding'
+          });
+        } catch (e) {
+          console.error("Firestore sync error:", e);
+        }
+      }
+    }
+
+    // APPEND BUBBLE TO CHAT VIEWPORT
+    function appendChatMessage(sender, text) {
+      const chatBox = document.getElementById('chatHistory');
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      let cardClass = sender === 'user' 
+        ? "ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none"
+        : "mr-auto bg-slate-900 border border-slate-800 text-slate-100 rounded-bl-none";
+
+      if (sender === 'system') {
+        cardClass = "mx-auto bg-slate-950/40 text-slate-500 text-[10px] uppercase font-bold tracking-widest text-center py-1 px-3 border border-slate-900";
+      }
+
+      const bubbleHtml = sender === 'system'
+        ? `
+          <div class="chat-bubble-item flex justify-center py-2 animate-fade-in" data-sender="${sender}" data-time="${timeStr}">
+            <div class="${cardClass} rounded-full text-center">
+              <span class="bubble-text-content px-4 py-1 block">${text}</span>
+            </div>
+          </div>
+        `
+        : `
+          <div class="chat-bubble-item flex items-end space-x-2 py-1 animate-fade-in ${sender === 'user' ? 'justify-end' : 'justify-start'}" data-sender="${sender}" data-time="${timeStr}">
+            ${sender === 'model' ? '<span class="text-2xl">🔮</span>' : ''}
+            <div class="max-w-[80%] rounded-2xl px-4 py-3 shadow-md ${cardClass}">
+              <div class="bubble-text-content text-xs leading-relaxed font-semibold whitespace-pre-wrap">${text}</div>
+              <div class="text-[9px] opacity-60 text-right mt-1.5 font-mono">${timeStr}</div>
+            </div>
+          </div>
+        `;
+
+      chatBox.innerHTML += bubbleHtml;
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      if (sender === 'model') {
+        playSound('receive');
+      }
+    }
+
+    // DYNAMIC FREE-TEXT MESSAGING TO GEMINI
+    async function submitUserText() {
+      const userInput = document.getElementById('userInputField').value.trim();
+      if (!userInput) return;
+
+      document.getElementById('userInputField').value = '';
+      playSound('click');
+
+      // Append user text
+      appendChatMessage('user', userInput);
+      await syncSessionData();
+
+      // Show temporary Counselor Typing spinner
+      showCounselorTyping(true);
+
+      // Call Gemini Engine
+      try {
+        const geminiReply = await generateDrAriaCounseling(userInput);
+        showCounselorTyping(false);
+        appendChatMessage('model', geminiReply);
+        await syncSessionData();
+      } catch (err) {
+        showCounselorTyping(false);
+        appendChatMessage('model', "💫 Oh, the cosmic frequency was briefly interrupted. Please ask me again, I am listening with deep attention.");
+        console.error(err);
+      }
+    }
+    window.submitUserText = submitUserText;
+
+    // Handle typing enter
+    window.handleInputKeydown = function(event) {
+      if (event.key === 'Enter') {
+        submitUserText();
+      }
+    }
+
+    function showCounselorTyping(isVisible) {
+      const chatBox = document.getElementById('chatHistory');
+      const existingTyping = document.getElementById('typingIndicatorBubble');
+      if (existingTyping) existingTyping.remove();
+
+      if (isVisible) {
+        chatBox.innerHTML += `
+          <div id="typingIndicatorBubble" class="flex items-center space-x-2 justify-start py-2 animate-pulse">
+            <span class="text-2xl">🔮</span>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-bl-none px-4 py-3 text-xs text-slate-400 font-semibold flex items-center space-x-2">
+              <span>Dr. Aria is consulting alignment</span>
+              <span class="flex space-x-1">
+                <span class="w-1 h-1 bg-slate-400 rounded-full animate-bounce"></span>
+                <span class="w-1 h-1 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                <span class="w-1 h-1 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+              </span>
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+
+    // GEMINI PROMPT CONFIGURATION (Standard Exponential Backoff included)
+    async function generateDrAriaCounseling(newUserPrompt) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+      
+      const systemPrompt = `
+        You are Dr. Aria, an exceptionally wise, warm, empathetic, and highly professional AI Psychiatrist and Relationship Counselor.
+        You are talking to a client in a confidential therapy workspace with this validated profile:
+        - Client Name: ${userName}
+        - Age: ${userAge || 'Not specified'}
+        - Gender: ${userGender || 'Not specified'}
+        - Current Relationship Status: ${userRelationship || 'Not specified'}
+        - Physical Intimacy frequency: ${userIntimacy || 'N/A'}
+        - Focus Stress Area: ${selectedCategory}
+
+        Therapy & Behavioral Guidelines:
+        1. Empathy first. Validate their challenges, struggles, or trauma associated with ${selectedCategory}.
+        2. Adopt an authentic psychological active-listening persona. Avoid dry clinic answers.
+        3. Break down advice into gentle steps. Recommend accessible behavioral exercises (CBT cognitive restructuring, grounding, mindfulness, boundary setups, relationship intimacy communication checks).
+        4. If their intimacy levels are low and relationship is married/dating, address the emotional distance with profound compassion, suggesting safe conversations.
+        5. Never write huge essays. Keep paragraphs concise, well-spaced, with bullet points where appropriate.
+        6. Reference them kindly by their name (${userName}) to establish safety and connection. Keep your dialogue natural.
+      `;
+
+      // Read all previous conversational elements
+      const bubbles = document.querySelectorAll('.chat-bubble-item');
+      const messagesPayload = [];
+      
+      bubbles.forEach(el => {
+        const sender = el.dataset.sender;
+        const text = el.querySelector('.bubble-text-content').innerText;
+        if (sender === 'user' || sender === 'model') {
+          messagesPayload.push({
+            role: sender === 'user' ? 'user' : 'model',
+            parts: [{ text: text }]
+          });
+        }
+      });
+
+      // Construct Payload
+      const payload = {
+        contents: messagesPayload,
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      // Execute fetch with retry handling
+      let delay = 1000;
+      for (let i = 0; i < 5; i++) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (response.ok) {
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "I am reflecting deeply on your words. Tell me more, I am listening.";
+          }
+        } catch (e) {
+          // Retry
+        }
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2;
+      }
+      throw new Error("Unable to contact counseling services.");
+    }
+
+    // RESET SESSION BACK TO TOPICS
+    window.resetToCategories = async function() {
+      playSound('click');
+      const verify = confirm("Are you sure you want to pause this session and change your stress topic?");
+      if (verify) {
+        selectedCategory = null;
+        showCategorySelection();
+      }
+    }
+
+
+    // ==========================================
+    // LAPTOP THERAPIST LOGS DASHBOARD (ADMIN PANEL)
+    // ==========================================
+    window.openPasskeyModal = function() {
+      playSound('click');
+      document.getElementById('passkeyModal').classList.remove('hidden');
+      document.getElementById('adminPasskeyInput').focus();
+    }
+
+    window.closePasskeyModal = function() {
+      playSound('click');
+      document.getElementById('passkeyModal').classList.add('hidden');
+      document.getElementById('adminPasskeyInput').value = '';
+    }
+
+    window.verifyPasskey = function() {
+      const pswd = document.getElementById('adminPasskeyInput').value;
+      if (pswd === 'rajath123') {
+        playSound('success');
+        document.getElementById('passkeyModal').classList.add('hidden');
+        document.getElementById('adminPasskeyInput').value = '';
+        
+        // Open dashboard
+        document.getElementById('dashboardModal').classList.remove('hidden');
+      } else {
+        playSound('click');
+        showCustomAlert('🔐 Locked System', 'Incorrect passkey security authorization!');
+      }
+    }
+
+    window.closeDashboardModal = function() {
+      playSound('click');
+      document.getElementById('dashboardModal').classList.add('hidden');
+    }
+
+    // REAL-TIME FIRESTORE MONITOR (RULE 2 - Fetch all, sort in memory)
+    function setupDashboardRealtimeListener() {
+      if (!currentUser) return;
+
+      const sessionsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
+      
+      onSnapshot(sessionsColRef, (snapshot) => {
+        const rawSessions = [];
+        snapshot.forEach((doc) => {
+          rawSessions.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Rule 2 Sorting: In-Memory Sort by timestamp/createdAt descending
+        allSessions = rawSessions.sort((a, b) => {
+          const tA = a.createdAt || 0;
+          const tB = b.createdAt || 0;
+          return tB - tA;
+        });
+
+        renderAdminSessionsList(allSessions);
+        
+        // If a session is currently active and selected inside admin view, refresh its live chat feed
+        if (activeSelectedAdminSessionId) {
+          const currentSelect = allSessions.find(s => s.id === activeSelectedAdminSessionId);
+          if (currentSelect) {
+            renderSelectedLiveFeed(currentSelect);
+          }
+        }
+      }, (error) => {
+        console.error("Dashboard monitor error: ", error);
+      });
+    }
+
+    // RENDER SESSIONS DIRECTLY IN LAPTOP ADMIN TABLE
+    function renderAdminSessionsList(list) {
+      const tableBody = document.getElementById('logsTableBody');
+      if (list.length === 0) {
+        tableBody.innerHTML = `
+          <tr id="emptyLogsRow">
+            <td colspan="3" class="p-8 text-center text-slate-500">
+              <span class="text-2xl block">📡</span>
+              <p class="text-xs font-semibold mt-1">Waiting for live data logs...</p>
+            </td>
+          </tr>
+        `;
+        document.getElementById('totalSessionsCount').innerText = 0;
+        document.getElementById('uniqueClientsCount').innerText = 0;
+        return;
+      }
+
+      let rowsHtml = '';
+      const uniqueNames = new Set();
+
+      list.forEach(item => {
+        uniqueNames.add(item.visitorName);
+
+        // Date format helper
+        let formattedTime = 'Recently';
+        if (item.createdAt) {
+          const date = new Date(item.createdAt);
+          formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' + date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        }
+
+        const categoryBadge = item.category 
+          ? `<span class="inline-block px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/20 text-[9px] font-bold text-indigo-300 uppercase">${item.category}</span>`
+          : `<span class="text-slate-500 italic">Unchosen</span>`;
+
+        const statusHighlight = activeSelectedAdminSessionId === item.id ? 'bg-indigo-950/40 border border-indigo-500/30' : '';
+
+        rowsHtml += `
+          <tr onclick="selectAdminTranscriptRow('${item.id}')" class="border-b border-slate-900/60 hover:bg-slate-900/40 transition-colors cursor-pointer ${statusHighlight}">
+            <td class="p-3">
+              <div class="font-bold text-slate-200">${item.visitorName}</div>
+              <div class="text-[9px] text-slate-500">${item.device || 'Mobile 📱'}</div>
+            </td>
+            <td class="p-3">
+              ${categoryBadge}
+            </td>
+            <td class="p-3 text-right text-slate-400 text-[10px] font-mono">
+              ${formattedTime}
+            </td>
+          </tr>
+        `;
+      });
+
+      tableBody.innerHTML = rowsHtml;
+      document.getElementById('totalSessionsCount').innerText = list.length;
+      document.getElementById('uniqueClientsCount').innerText = uniqueNames.size;
+    }
+
+    // SEARCH SESSIONS
+    window.filterLogs = function() {
+      const searchVal = document.getElementById('dashboardSearch').value.toLowerCase();
+      const filtered = allSessions.filter(item => {
+        return item.visitorName.toLowerCase().includes(searchVal) || 
+               (item.category && item.category.toLowerCase().includes(searchVal)) ||
+               (item.gender && item.gender.toLowerCase().includes(searchVal));
+      });
+      renderAdminSessionsList(filtered);
+    }
+
+    // SELECT ROW TO DISPLAY TRANSCRIPT IN ADMIN VIEW
+    window.selectAdminTranscriptRow = function(sessionId) {
+      playSound('click');
+      activeSelectedAdminSessionId = sessionId;
+      const currentSelect = allSessions.find(s => s.id === sessionId);
+      if (currentSelect) {
+        renderSelectedLiveFeed(currentSelect);
+        // Rerender table list to display highlighted state active border
+        renderAdminSessionsList(allSessions);
+      }
+    }
+
+    // RENDER INTERACTIVE TRANSCRIPT STREAM IN ADMIN VIEW
+    function renderSelectedLiveFeed(sessionObj) {
+      document.getElementById('selectedUserLabel').innerText = `${sessionObj.visitorName}'s Live Session`;
+      const feedArea = document.getElementById('liveAdminFeedArea');
+      feedArea.innerHTML = '';
+
+      // Detailed metadata card at the top
+      let metaHtml = `
+        <div class="p-3 bg-[#0a0f24] rounded-xl border border-slate-800/80 mb-4 text-[10px] leading-normal grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-300">
+          <div><span class="text-slate-500 block uppercase font-bold tracking-widest text-[8px]">Gender:</span> ${sessionObj.gender || 'N/A'}</div>
+          <div><span class="text-slate-500 block uppercase font-bold tracking-widest text-[8px]">Age:</span> ${sessionObj.age || 'N/A'} years</div>
+          <div><span class="text-slate-500 block uppercase font-bold tracking-widest text-[8px]">Status:</span> ${sessionObj.relationshipStatus || 'N/A'}</div>
+          <div><span class="text-slate-500 block uppercase font-bold tracking-widest text-[8px]">Intimacy:</span> ${sessionObj.intimacyFrequency || 'N/A'}</div>
+        </div>
+      `;
+
+      feedArea.innerHTML += metaHtml;
+
+      if (!sessionObj.messages || sessionObj.messages.length === 0) {
+        feedArea.innerHTML += `<div class="text-center text-slate-500 py-6">Waiting for client to send first onboarding message...</div>`;
+        return;
+      }
+
+      let chatHistoryHtml = '';
+      sessionObj.messages.forEach(msg => {
+        if (msg.sender === 'system') {
+          chatHistoryHtml += `
+            <div class="text-center text-[9px] uppercase tracking-wider font-bold text-slate-600 bg-slate-950/60 py-1 px-3 rounded border border-slate-900/60 max-w-xs mx-auto my-2">
+              ${msg.text}
+            </div>
+          `;
+        } else {
+          const sideColor = msg.sender === 'user' ? 'border-l-2 border-indigo-500 bg-indigo-950/20' : 'border-l-2 border-slate-700 bg-slate-900/40';
+          const nameColor = msg.sender === 'user' ? 'text-indigo-300' : 'text-slate-400';
+          chatHistoryHtml += `
+            <div class="p-2 rounded ${sideColor} space-y-1">
+              <div class="flex justify-between items-center text-[10px] font-bold">
+                <span class="${nameColor}">${msg.sender === 'user' ? sessionObj.visitorName : 'Dr. Aria'}</span>
+                <span class="text-slate-500 text-[8px] font-mono">${msg.time || ''}</span>
+              </div>
+              <p class="text-slate-300 leading-normal text-xs whitespace-pre-wrap">${msg.text}</p>
+            </div>
+          `;
+        }
+      });
+
+      feedArea.innerHTML += chatHistoryHtml;
+      feedArea.scrollTop = feedArea.scrollHeight;
+    }
+
+    // PURGE ADMIN LOGS
+    window.clearAllDataPrompt = async function() {
+      playSound('click');
+      const verify = confirm("⚠️ Are you absolutely sure you want to clear all interactive psychiatric logs? This resets visitor history completely.");
+      if (verify) {
+        try {
+          const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'sessions');
+          const snap = await getDocs(colRef);
+          
+          const promises = snap.docs.map(item => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sessions', item.id)));
+          await Promise.all(promises);
+          
+          activeSelectedAdminSessionId = null;
+          document.getElementById('liveAdminFeedArea').innerHTML = `<div class="text-center text-slate-500 py-10">Select any row from the left panel to display live interactive transcripts.</div>`;
+          document.getElementById('selectedUserLabel').innerText = 'No Session Selected';
+
+          showCustomAlert('🗑️ Purged Complete', 'Sessions data cleared completely.');
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    // CUSTOM MODAL ALERTS
+    window.showCustomAlert = function(title, text, icon = '🌌') {
+      document.getElementById('alertIcon').innerText = icon;
+      document.getElementById('alertTitle').innerText = title;
+      document.getElementById('alertMsg').innerText = text;
+      
+      const modal = document.getElementById('customAlertModal');
+      modal.classList.remove('hidden');
+    }
+
+    window.closeCustomAlert = function() {
+      playSound('click');
+      document.getElementById('customAlertModal').classList.add('hidden');
+    }
+
+  </script>
+</body>
+</html>
